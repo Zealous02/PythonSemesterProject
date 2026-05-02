@@ -17,17 +17,31 @@ class Game:
         self.font = pygame.font.SysFont(None, 40)
  
     def handle_event(self, event):
-        # if state is "playing" and spacebar/mouse pressed: call self.bird.flap()
-        # if state is "game_over" and a key is pressed: reset the game
-        pass
+        if event.type == pygame.KEYDOWN:
+            if self.state == "playing" and event.key == pygame.K_SPACE:
+                self.bird.flap()
+            elif self.state == "game_over" and event.key == pygame.K_SPACE:
+                self.__init__(self.screen)
  
     def update(self):
-        # only update if state is "playing"
-        # 1. call self.bird.update()
-        # 2. increment frame_count, spawn a pipe every PIPE_SPAWN_INTERVAL frames
-        # 3. update and clean up off-screen pipes
-        # 4. check collisions and update score
-        pass
+        if self.state != "playing":
+            return
+        
+        self.bird.update()
+
+        self.frame_count += 1 # timer to spawn new pipes
+        if self.frame_count % PIPE_SPAWN_INTERVAL == 0:
+            self._spawn_pipe()
+
+        # moves all pipes    
+        for pipe in self.pipes:
+            pipe.update()
+
+        # holds pipes not on screen
+        self.pipes = [p for p in self.pipes if not p.off_screen()]
+
+        self._check_collisions()
+        self._update_score()
  
     def _spawn_pipe(self):
         # create a Pipe starting just off the right edge of the screen
@@ -45,10 +59,20 @@ class Game:
         pass
  
     def draw(self):
-        # fill background with a sky color
-        # draw all pipes, then the bird, then the score text
-        pass
+        self.screen.fill((135, 206, 235))  # sky blue
+
+        for pipe in self.pipes:
+            pipe.draw(self.screen)
+
+        self.bird.draw(self.screen)
+
+        score_text = self.font.render(f"Score: {self.score}", True, (255, 255, 255))
+        self.screen.blit(score_text, (10, 10))
+        if self.state == "game_over":
+            self._draw_game_over()
  
     def _draw_game_over(self):
-        #Overlay a game-over message with the final score.
-        pass
+        text = self.font.render(f"Game Over! Score: {self.score}", True, (255, 0, 0))
+        self.screen.blit(text, (SCREEN_WIDTH // 2 - text.get_width() // 2, SCREEN_HEIGHT // 2))
+        hint = self.font.render("Press SPACE or LEFT MOUSE CLICK to restart", True, (255, 255, 255))
+        self.screen.blit(hint, (SCREEN_WIDTH // 2 - hint.get_width() // 2, SCREEN_HEIGHT // 2 + 50))
