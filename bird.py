@@ -9,20 +9,19 @@ class Bird:
         self.flap_strength = -8
         self.width = 34
         self.height = 24
+        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
  
     def flap(self):
-        # Make the bird jump upward
-        pass
+        self.velocity = self.flap_strength
  
     def update(self):
-        # Apply gravity and update position each frame.
-        pass
+        self.velocity += self.gravity
+        self.y += self.velocity
+        self.rect.y = self.y
  
     def draw(self, screen):
-        # Draw the bird on screen (rectangle placeholder)
-        pass
+        pygame.draw.rect(screen, (255, 255, 0), self.rect)
  
     def get_rect(self):
-        # Return a pygame.Rect for collision detection.
-        pass
+        return self.rect
  
