@@ -11,27 +11,26 @@ class Pipe:
         self.x = x
         self.width = PIPE_WIDTH
         self.gap = GAP
+
         # top pipe height is random so each pair is different
         self.top_height = random.randint(50, SCREEN_HEIGHT - GAP - 50)
         self.bottom_y = self.top_height + self.gap  # bottom pipe starts after the gap
         self.passed = False  # flips to True once the bird clears it (used for scoring)
+
+        self.top_rect = pygame.Rect(self.x, 0, self.width, self.top_height)
+        self.bottom_rect = pygame.Rect(self.x, self.bottom_y, self.width, SCREEN_HEIGHT - self.bottom_y)
  
     def update(self):
-        # Move pipe to the left each frame.
-        # subtract PIPE_SPEED from self.x
-        pass
+        self.x -= PIPE_SPEED
+        self.top_rect.x = self.x
+        self.bottom_rect.x = self.x
  
     def draw(self, screen):
-        # top pipe:    rect from (self.x, 0) with height = self.top_height
-        # bottom pipe: rect from (self.x, self.bottom_y) down to bottom of screen
-        pass
+        pygame.draw.rect(screen, (0, 128, 0), self.top_rect) # top pipe
+        pygame.draw.rect(screen, (0, 128, 0), self.bottom_rect) # bottom pipe
  
     def get_rects(self):
-        # Return (top_rect, bottom_rect) for collision detection.
-        # return a tuple of two pygame.Rect objects
-        pass
+        return (self.top_rect, self.bottom_rect)
  
     def is_off_screen(self):
-        # Return True if the pipe has moved past the left edge.
-        # check if self.x + self.width < 0
-        pass
+        return self.x + self.width < 0
