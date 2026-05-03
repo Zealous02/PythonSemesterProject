@@ -38,7 +38,7 @@ class Game:
             pipe.update()
 
         # holds pipes not on screen
-        self.pipes = [p for p in self.pipes if not p.off_screen()]
+        self.pipes = [p for p in self.pipes if not p.is_off_screen()]
 
         self._check_collisions()
         self._update_score()
