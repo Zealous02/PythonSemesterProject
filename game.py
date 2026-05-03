@@ -44,19 +44,23 @@ class Game:
         self._update_score()
  
     def _spawn_pipe(self):
-        # create a Pipe starting just off the right edge of the screen
-        pass
+        self.pipes.append(Pipe(SCREEN_WIDTH)) # makes a new pipe
  
-    def _check_collisions(self):
-        # get bird rect, loop through pipes and check colliderect() against both rects
-        # also check if bird.y < 0 or bird.y > SCREEN_HEIGHT
-        # if any hit: set self.state = "game_over"
-        pass
+    def _check_collisions(self): 
+        bird_rect = self.bird.get_rect() # bird's rect
+        
+        for pipe in self.pipes: # iterating through all pipes to check for collision
+            if bird_rect.colliderect(pipe.top_rect) or bird_rect.colliderect(pipe.bottom_rect): # 
+                self.state = "game_over"
+        
+        if self.bird.y < 0 or self.bird.y > SCREEN_HEIGHT: # checks if we hit the top or bottom of the screen
+            self.state = "game_over" 
  
     def _update_score(self):
-        # loop through pipes, if pipe.passed is False and bird.x > pipe.x + pipe.width:
-        #   set pipe.passed = True and increment self.score
-        pass
+        for pipe in self.pipes:
+            if pipe.passed == False and self.bird.x > pipe.x + pipe.width:
+                pipe.passed = True
+                self.score += 1
  
     def draw(self):
         self.screen.fill((135, 206, 235))  # sky blue
