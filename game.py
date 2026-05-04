@@ -12,6 +12,7 @@ class Game:
         self.bird = Bird(80, SCREEN_HEIGHT // 2)  # start bird in the middle-left
         self.pipes = []       # list of active Pipe objects
         self.score = 0
+        self.highscore = 0
         self.frame_count = 0  # counts up each frame, used to time pipe spawning
         self.state = "playing"  # switches to "game_over" on collision
         self.font = pygame.font.SysFont(None, 40)
@@ -21,7 +22,9 @@ class Game:
             if self.state == "playing" and event.key == pygame.K_SPACE:
                 self.bird.flap()
             elif self.state == "game_over" and event.key == pygame.K_SPACE:
+                old_highscore = self.highscore
                 self.__init__(self.screen)
+                self.highscore = old_highscore
  
     def update(self):
         if self.state != "playing":
@@ -54,7 +57,10 @@ class Game:
                 self.state = "game_over"
         
         if self.bird.y < 0 or self.bird.y > SCREEN_HEIGHT: # checks if we hit the top or bottom of the screen
+            if self.score > self.highscore:
+                self.highscore = self.score
             self.state = "game_over" 
+
  
     def _update_score(self):
         for pipe in self.pipes:
@@ -71,7 +77,10 @@ class Game:
         self.bird.draw(self.screen)
 
         score_text = self.font.render(f"Score: {self.score}", True, (255, 255, 255))
+        highscore_text = self.font.render(f"Highscore: {self.highscore}", True, (255, 255, 255))
         self.screen.blit(score_text, (10, 10))
+        self.screen.blit(highscore_text, (225, 10))
+
         if self.state == "game_over":
             self._draw_game_over()
  
@@ -80,3 +89,5 @@ class Game:
         self.screen.blit(text, (SCREEN_WIDTH // 2 - text.get_width() // 2, SCREEN_HEIGHT // 2))
         hint = self.font.render("Press SPACE or LEFT MOUSE CLICK to restart", True, (255, 255, 255))
         self.screen.blit(hint, (SCREEN_WIDTH // 2 - hint.get_width() // 2, SCREEN_HEIGHT // 2 + 50))
+        high_text = self.font.render(f"Best: {self.highscore}", True, (255, 255, 0))
+        self.screen.blit(high_text, (SCREEN_WIDTH // 2 - high_text.get_width() // 2, SCREEN_HEIGHT // 2 + 100))
